@@ -44,8 +44,8 @@ cache_file=~/.tmux-clima
 cache_ttl=900
 
 if [[ -f "$cache_file" ]]; then
-    local NOW=$(date +%s)
-    local MOD=$(date -r "$cache_file" +%s)
+    NOW=$(date +%s)
+    MOD=$(date -r "$cache_file" +%s)
     if [[ $(( $NOW - $MOD )) -gt $cache_ttl ]]; then
         rm "$cache_file"
     fi
