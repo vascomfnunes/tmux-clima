@@ -58,4 +58,4 @@ set -g status-right "#{clima}"
 ## License
 
 This plugin is licensed under the MIT license. For more information please refer
-to the [LICENSE](https://github.com/vascomfnunes/tmux-clima/LICENSE) file.
+to the [LICENSE](https://github.com/vascomfnunes/tmux-clima/blob/main/LICENSE) file.
