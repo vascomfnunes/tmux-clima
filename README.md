@@ -7,19 +7,19 @@ The location is obtained automatically using your IP address.
 
 Results are cached in `~/.tmux-clima` for 15 minutes by default.
 
-Currently only displays the temperature in Celsius degrees.
+Currently, it only supports Celsius degrees.
 
 ## Requirements
 
 ### OpenWeatherMap API key
 
 The weather information is provided by
-[OpenWeatherMap](https://openweathermap.org/) and to use this plugin you need a
+[OpenWeatherMap](https://openweathermap.org/). To use this plugin you need a
 valid OpenWeather API key that can be request
 [here](https://openweathermap.org/api).
 
 An environment variable named `OPEN_WEATHER_API_KEY` with the API key value
-should be exported in order to use this plugin:
+should be exported to use this plugin:
 
 ```bash
 export OPEN_WEATHER_API_KEY="[API-KEY-VALUE]"
@@ -32,12 +32,12 @@ You can add this to your shell configuration or source it from any other file.
 Make sure you have [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm)
 and [jq](https://stedolan.github.io/jq/download/) installed.
 
-Also keep in mind that in order to correctly display the weather conditions
+Also, keep in mind that to correctly display the weather conditions
 icons you will need to use a patched [Nerd Font](https://www.nerdfonts.com/)
 
 ## Install
 
-Then add the plugin to `~/.tmux.conf`:
+Then add the plugin to your `~/.tmux.conf`:
 
 ```tmux
 set -g @plugin 'vascomfnunes/tmux-clima'
@@ -53,6 +53,17 @@ For example:
 
 ```tmux
 set -g status-right "#{clima}"
+```
+
+## Configuration
+
+### Time-to-live (TTL)
+
+This plugin caches the weather by default for 15 minutes. You can set any other
+TTL value (in seconds) using the option:
+
+```
+set -g @clima_ttl <value_in_seconds>
 ```
 
 ## License
