@@ -1,5 +1,7 @@
 # Clima
 
+![https://github.com/vascomfnunes/tmux-clima/blob/main/media/img/shot.png](https://github.com/vascomfnunes/tmux-clima/blob/main/media/img/shot.png)
+
 **Clima (Esperanto for weather) is a simple plugin that displays the local
 weather conditions and temperature in your Tmux status line.**
 
