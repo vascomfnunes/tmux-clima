@@ -56,7 +56,7 @@ icon() {
 	esac
 }
 
-cache_file=~/.tmux-clima
+cache_file=/tmp/tmux-clima
 cache_ttl=$TTL
 
 if [[ -f "$cache_file" ]]; then
