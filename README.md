@@ -57,6 +57,11 @@ For example:
 set -g status-right "#{clima}"
 ```
 
+Current weather details can be visualized using `prefix + W`, which will display
+a standard tmux message with additional weather details:
+
+![https://github.com/vascomfnunes/tmux-clima/blob/main/media/img/details.png](https://github.com/vascomfnunes/tmux-clima/blob/main/media/img/details.png)
+
 ## Configuration
 
 ### Time-to-live (TTL)

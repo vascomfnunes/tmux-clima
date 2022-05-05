@@ -56,14 +56,15 @@ icon() {
 	esac
 }
 
-cache_file=/tmp/tmux-clima
+cache_file=/tmp/tmux_clima
+cache_file_details=/tmp/tmux_clima_details
 cache_ttl=$TTL
 
 if [[ -f "$cache_file" ]]; then
 	NOW=$(date +%s)
 	MOD=$(date -r "$cache_file" +%s)
 	if [[ $((NOW - MOD)) -gt $cache_ttl ]]; then
-		rm "$cache_file"
+		rm "$cache_file $cache_file_details"
 	fi
 fi
 
@@ -76,6 +77,13 @@ if [[ ! -f "$cache_file" ]]; then
 	TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
 	ICON=$(icon "$CATEGORY")
 
+	# write cache file for details message
+	echo "$(echo "$LOCATION" | cut -d , -f 6), $(echo "$LOCATION" | cut -d , -f 2) \
+    ${ICON} ${TEMP} $(echo "$WEATHER" | jq .weather[0].main) \
+    Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)°C \
+    Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s" >"$cache_file_details"
+
+	# write cache file for statusline
 	echo "${ICON} ${TEMP}" >"$cache_file"
 fi
 

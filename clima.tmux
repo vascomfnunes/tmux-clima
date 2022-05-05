@@ -14,6 +14,7 @@ interpolate() {
 
 main() {
 	set_tmux_option "status-right"
-	set_tmux_option "status-left"
+	tmux bind-key -T prefix W run -b "source $CWD/scripts/details.sh && show_details"
 }
+
 main
