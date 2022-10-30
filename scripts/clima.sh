@@ -69,16 +69,16 @@ if [[ -f "$cache_file" ]]; then
 fi
 
 if [[ ! -f "$cache_file" ]]; then
-	LOCATION=$(curl --silent http://ip-api.com/csv)
-	LAT=$(echo "$LOCATION" | cut -d , -f 8)
-	LON=$(echo "$LOCATION" | cut -d , -f 9)
+	LOCATION=$(curl --silent https://ifconfig.co/json)
+	LAT=$(echo "$LOCATION" | jq .latitude)
+	LON=$(echo "$LOCATION" | jq .longitude)
 	WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPEN_WEATHER_API_KEY"\&units=metric)
 	CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
 	TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
 	ICON=$(icon "$CATEGORY")
 
 	# write cache file for details message
-	echo "$(echo "$LOCATION" | cut -d , -f 6), $(echo "$LOCATION" | cut -d , -f 2) \
+	echo "$(echo "$LOCATION" | jq .city), $(echo "$LOCATION" | jq .country) \
     ${ICON} ${TEMP} $(echo "$WEATHER" | jq .weather[0].main) \
     Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)°C \
     Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s" >"$cache_file_details"
