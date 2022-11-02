@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$CWD/tmux.sh"
+
 # Weather data reference: http://openweathermap.org/weather-conditions
 
 TTL=$(get_tmux_option @clima_ttl 900)
@@ -43,16 +46,19 @@ icon() {
             ;;
             # Clear group
         800)
-            echo '🔆'
+            echo '☀️ '
             ;;
             # Clouds group
         801)
             echo '🌤'
             ;;
         802)
+            echo '⛅️'
+            ;;
+        803)
             echo '🌥'
             ;;
-        803 | 804)
+        804)
             echo '☁️ '
             ;;
         *) echo "$1"
@@ -60,35 +66,34 @@ icon() {
     esac
 }
 
-cache_file=/tmp/tmux_clima
-cache_file_details=/tmp/tmux_clima_details
-cache_ttl=$TTL
-
-if [[ -f "$cache_file" ]]; then
+clima() {
     NOW=$(date +%s)
-    MOD=$(date -r "$cache_file" +%s)
-    if [[ $((NOW - MOD)) -gt $cache_ttl ]]; then
-        rm "$cache_file $cache_file_details"
+    LAST_UPDATE_TIME=$(get_tmux_option "@clima_last_update_time")
+    MOD=$((NOW - LAST_UPDATE_TIME))
+    if [ -z "$LAST_UPDATE_TIME" ] || [ "$MOD" -ge "$TTL" ]; then
+        LOCATION=$(curl --silent https://ifconfig.co/json)
+        LAT=$(echo "$LOCATION" | jq .latitude)
+        LON=$(echo "$LOCATION" | jq .longitude)
+        WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPEN_WEATHER_API_KEY"\&units=metric)
+        if [ "$?" -eq 0 ]; then
+            CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
+            TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
+            ICON=$(icon "$CATEGORY")
+            CITY="$(echo "$LOCATION" | jq -r .city)"
+            COUNTRY="$(echo "$LOCATION" | jq -r .country)"
+            DESCRIPTION="$(echo "$WEATHER" | jq -r .weather[0].main)"
+            FEELS_LIKE="Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)°C"
+            WIND_SPEED="Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s"
+            CLIMA="${CITY}:${ICON} ${TEMP}"
+            CLIMA_DETAILS="${CITY}, ${COUNTRY}: ${ICON} ${TEMP}, ${DESCRIPTION}, ${FEELS_LIKE}, ${WIND_SPEED}"
+
+            set_tmux_option "@clima_last_update_time" "$NOW"
+            set_tmux_option "@clima_current_value" "$CLIMA"
+            set_tmux_option "@clima_details_value" "$CLIMA_DETAILS"
+        fi
     fi
-fi
 
-if [[ ! -f "$cache_file" ]]; then
-    LOCATION=$(curl --silent https://ifconfig.co/json)
-    LAT=$(echo "$LOCATION" | jq .latitude)
-    LON=$(echo "$LOCATION" | jq .longitude)
-    WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPEN_WEATHER_API_KEY"\&units=metric)
-    CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
-    TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)°C"
-    ICON=$(icon "$CATEGORY")
+    echo -n "$(get_tmux_option "@clima_current_value")"
+}
 
-    # write cache file for details message
-    echo "$(echo "$LOCATION" | jq .city), $(echo "$LOCATION" | jq .country) \
-    ${ICON} ${TEMP} $(echo "$WEATHER" | jq .weather[0].main) \
-    Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)°C \
-    Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s" >"$cache_file_details"
-
-    # write cache file for statusline
-    echo "${ICON} ${TEMP}" >"$cache_file"
-fi
-
-cat "$cache_file"
+clima

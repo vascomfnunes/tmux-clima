@@ -7,14 +7,16 @@ weather_script="#($CWD/scripts/clima.sh)"
 weather_tag="\#{clima}"
 
 interpolate() {
-	local interpolated="$1"
-	local interpolated="${interpolated/$weather_tag/$weather_script}"
-	echo "$interpolated"
+    local option="$1"
+    local value
+    value="$(get_tmux_option "$option")"
+    local interpolated="${value/$weather_tag/$weather_script}"
+    set_tmux_option "$option" "$interpolated"
 }
 
 main() {
-	set_tmux_option "status-right"
-	tmux bind-key -T prefix W run -b "source $CWD/scripts/details.sh && show_details"
+    interpolate "status-right"
+    tmux bind-key -T prefix W show-options -gqv @clima_details_value
 }
 
 main
