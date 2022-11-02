@@ -46,7 +46,7 @@ icon() {
             ;;
             # Clear group
         800)
-            echo '☀️ '
+            echo '☀ '
             ;;
             # Clouds group
         801)
@@ -59,7 +59,7 @@ icon() {
             echo '🌥'
             ;;
         804)
-            echo '☁️ '
+            echo '☁ '
             ;;
         *) echo "$1"
             ;;
@@ -84,7 +84,7 @@ clima() {
             DESCRIPTION="$(echo "$WEATHER" | jq -r .weather[0].main)"
             FEELS_LIKE="Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)°C"
             WIND_SPEED="Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s"
-            CLIMA="${CITY}:${ICON} ${TEMP}"
+            CLIMA="${CITY}: ${ICON} ${TEMP}"
             CLIMA_DETAILS="${CITY}, ${COUNTRY}: ${ICON} ${TEMP}, ${DESCRIPTION}, ${FEELS_LIKE}, ${WIND_SPEED}"
 
             set_tmux_option "@clima_last_update_time" "$NOW"
