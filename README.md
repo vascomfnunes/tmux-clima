@@ -7,7 +7,7 @@ weather conditions and temperature in your Tmux status line.**
 
 The location is obtained automatically using your IP address.
 
-Results are cached in `~/.tmux-clima` for 15 minutes by default.
+Results are cached for 15 minutes by default.
 
 Currently, it only supports Celsius degrees.
 
@@ -33,9 +33,6 @@ You can add this to your shell configuration or source it from any other file.
 
 Make sure you have [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm)
 and [jq](https://stedolan.github.io/jq/download/) installed.
-
-Also, keep in mind that to correctly display the weather conditions
-icons you will need to use a patched [Nerd Font](https://www.nerdfonts.com/)
 
 ## Install
 
