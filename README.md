@@ -9,8 +9,6 @@ The location is obtained automatically using your IP address.
 
 Results are cached for 15 minutes by default.
 
-Currently, it only supports Celsius degrees.
-
 ## Requirements
 
 ### OpenWeatherMap API key
@@ -68,6 +66,14 @@ TTL value (in seconds) using the option:
 
 ```
 set -g @clima_ttl <value_in_seconds>
+```
+
+### Unit
+
+Weather temperature unit can be configured through following option (default is 'metric')
+
+```
+set -g @clima_unit <metric | imperial | kelvin>
 ```
 
 ## License
