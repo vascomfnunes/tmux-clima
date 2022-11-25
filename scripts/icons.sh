@@ -5,16 +5,16 @@ NERD_FONT=$(get_tmux_option @clima_use_nerd_font 0)
 symbol() {
 	case $1 in
 	metric)
-		echo '℃ '
+		echo '℃'
 		;;
 	imperial)
-		echo '℉ '
+		echo '℉'
 		;;
 	kelvin)
 		echo ' K'
 		;;
 	*)
-		echo '℃ '
+		echo '℃'
 		;;
 	esac
 }
