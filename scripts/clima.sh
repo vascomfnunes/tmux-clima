@@ -33,11 +33,11 @@ clima() {
 			CLIMA=""
 
 			if [ "$SHOW_LOCATION" == 1 ]; then
-				CLIMA="$CLIMA$CITY,"
+				CLIMA="$CLIMA$CITY, "
 			fi
 
 			if [ "$SHOW_ICON" == 1 ]; then
-				CLIMA="$CLIMA $ICON"
+				CLIMA="$CLIMA$ICON"
 			fi
 
 			CLIMA="$CLIMA $TEMP"
