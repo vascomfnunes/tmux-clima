@@ -64,7 +64,7 @@ a standard tmux message with additional weather details:
 This plugin caches the weather by default for 15 minutes. You can set any other
 TTL value (in seconds) using the option:
 
-```
+```bash
 set -g @clima_ttl <value_in_seconds>
 ```
 
@@ -72,8 +72,39 @@ set -g @clima_ttl <value_in_seconds>
 
 Weather temperature unit can be configured through following option (default is 'metric')
 
-```
+```bash
 set -g @clima_unit <metric | imperial | kelvin>
+```
+
+### Location
+
+You can choose not to show the location in the statusbar with the following
+option:
+
+```bash
+set -g @clima_show_location 0
+```
+
+By default it always show the location in the statusbar.
+
+### Icons
+
+You can choose not to show the weather condition icon in the statusbar with the
+following option:
+
+```bash
+set -g @clima_show_icon 0
+```
+
+By default it always show the icon in the statusbar.
+
+#### Nerd Fonts
+
+Icons are displayed by default using unicode symbols. If you are using a patched
+[Nerd Font](https://www.nerdfonts.com/) and prefer to use Nerd Icons:
+
+```bash
+set -g @clima_use_nerd_font 1
 ```
 
 ## License
