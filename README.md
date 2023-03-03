@@ -62,10 +62,10 @@ a standard tmux message with additional weather details:
 ### Time-to-live (TTL)
 
 This plugin caches the weather by default for 15 minutes. You can set any other
-TTL value (in seconds) using the option:
+TTL value (in minutes) using the option:
 
 ```bash
-set -g @clima_ttl <value_in_seconds>
+set -g @clima_ttl <value_in_minutes>
 ```
 
 ### Unit

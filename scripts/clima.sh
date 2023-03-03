@@ -6,7 +6,7 @@ source "$CWD/icons.sh"
 
 # Weather data reference: http://openweathermap.org/weather-conditions
 
-TTL=$(get_tmux_option @clima_ttl 900)
+TTL=$((60 * $(get_tmux_option @clima_ttl 15)))
 UNIT=$(get_tmux_option @clima_unit "metric")
 SHOW_ICON=$(get_tmux_option @clima_show_icon 1)
 SHOW_LOCATION=$(get_tmux_option @clima_show_location 1)
