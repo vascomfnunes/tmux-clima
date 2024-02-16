@@ -18,5 +18,4 @@ set_tmux_option() {
     local option_name="$1"
     local option_value="$2"
     tmux set-option -gq "$option_name" "$option_value"
-    echo -n "$(get_tmux_option "$option_name")"
 }
