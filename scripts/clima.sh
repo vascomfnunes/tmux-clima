@@ -18,8 +18,7 @@ get_location_coordinates() {
     local lon=""
     local city=""
     local country=""
-    if [ -z "$CLIMA_LOCATION" ]; then
-        # return LAT and LON
+    if [ -z "$1" ]; then
         loc_response=$(curl --silent https://ifconfig.co/json)
         lat=$(echo "$loc_response" | jq -r .latitude)
         lon=$(echo "$loc_response" | jq -r .longitude)
@@ -42,11 +41,12 @@ get_location_coordinates() {
 
 clima() {
     NOW=$(date +%s)
-    LAST_UPDATE_TIME=$(get_tmux_option "@clima_last_update_time")
+    LAST_UPDATE_TIME=$(get_tmux_option @clima_last_update_time)
+    CLIMA_LAST_LOCATION=$(get_tmux_option @clima_last_location "")
     MOD=$((NOW - LAST_UPDATE_TIME))
     SYMBOL=$(symbol "$UNIT")
-    if [ -z "$LAST_UPDATE_TIME" ] || [ "$MOD" -ge "$TTL" ]; then
-        LOCATION=$(get_location_coordinates)
+    if [ -z "$LAST_UPDATE_TIME" ] || [ "$MOD" -ge "$TTL" ] || [ "$CLIMA_LOCATION" != "$CLIMA_LAST_LOCATION" ]; then
+        LOCATION=$(get_location_coordinates "$CLIMA_LOCATION")
         LAT=$(echo "$LOCATION" | jq -r .lat)
         LON=$(echo "$LOCATION" | jq -r .lon)
         WEATHER=$(curl --silent "http://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LON&APPID=$OPEN_WEATHER_API_KEY&units=$UNIT")
@@ -75,6 +75,7 @@ clima() {
             set_tmux_option "@clima_last_update_time" "$NOW"
             set_tmux_option "@clima_current_value" "$CLIMA"
             set_tmux_option "@clima_details_value" "$CLIMA_DETAILS"
+            set_tmux_option "@clima_last_location" "$CLIMA_LOCATION"
         fi
     fi
 
