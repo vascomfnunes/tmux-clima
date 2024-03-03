@@ -10,17 +10,46 @@ TTL=$((60 * $(get_tmux_option @clima_ttl 15)))
 UNIT=$(get_tmux_option @clima_unit "metric")
 SHOW_ICON=$(get_tmux_option @clima_show_icon 1)
 SHOW_LOCATION=$(get_tmux_option @clima_show_location 1)
+CLIMA_LOCATION=$(get_tmux_option @clima_location "")
+
+get_location_coordinates() {
+    local loc_response=""
+    local lat=""
+    local lon=""
+    local city=""
+    local country=""
+    if [ -z "$1" ]; then
+        loc_response=$(curl --silent https://ifconfig.co/json)
+        lat=$(echo "$loc_response" | jq -r .latitude)
+        lon=$(echo "$loc_response" | jq -r .longitude)
+        city="$(echo "$loc_response" | jq -r .city)"
+        country="$(echo "$loc_response" | jq -r .country_iso)"
+    else
+        loc_response=$(curl --silent "http://api.openweathermap.org/geo/1.0/direct?q=$CLIMA_LOCATION&limit=1&appid=$OPEN_WEATHER_API_KEY")
+        lat=$(echo "$loc_response" | jq -r .[0].lat)
+        lon=$(echo "$loc_response" | jq -r .[0].lon)
+        city="$(echo "$loc_response" | jq -r .[0].name)"
+        country="$(echo "$loc_response" | jq -r .[0].country)"
+    fi
+
+    echo -n "$(jq -n --arg "lat" "$lat" \
+        --arg "lon" "$lon" \
+        --arg "city" "$city" \
+        --arg "country" "$country" \
+        '{lat: $lat, lon: $lon, city: $city, country: $country}')"
+}
 
 clima() {
     NOW=$(date +%s)
-    LAST_UPDATE_TIME=$(get_tmux_option "@clima_last_update_time")
+    LAST_UPDATE_TIME=$(get_tmux_option @clima_last_update_time)
+    CLIMA_LAST_LOCATION=$(get_tmux_option @clima_last_location "")
     MOD=$((NOW - LAST_UPDATE_TIME))
     SYMBOL=$(symbol "$UNIT")
-    if [ -z "$LAST_UPDATE_TIME" ] || [ "$MOD" -ge "$TTL" ]; then
-        LOCATION=$(curl --silent https://ifconfig.co/json)
-        LAT=$(echo "$LOCATION" | jq .latitude)
-        LON=$(echo "$LOCATION" | jq .longitude)
-        WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$OPEN_WEATHER_API_KEY"\&units="$UNIT")
+    if [ -z "$LAST_UPDATE_TIME" ] || [ "$MOD" -ge "$TTL" ] || [ "$CLIMA_LOCATION" != "$CLIMA_LAST_LOCATION" ]; then
+        LOCATION=$(get_location_coordinates "$CLIMA_LOCATION")
+        LAT=$(echo "$LOCATION" | jq -r .lat)
+        LON=$(echo "$LOCATION" | jq -r .lon)
+        WEATHER=$(curl --silent "http://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LON&APPID=$OPEN_WEATHER_API_KEY&units=$UNIT")
         if [ "$?" -eq 0 ]; then
             CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
             TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)$SYMBOL"
@@ -46,6 +75,7 @@ clima() {
             set_tmux_option "@clima_last_update_time" "$NOW"
             set_tmux_option "@clima_current_value" "$CLIMA"
             set_tmux_option "@clima_details_value" "$CLIMA_DETAILS"
+            set_tmux_option "@clima_last_location" "$CLIMA_LOCATION"
         fi
     fi
 

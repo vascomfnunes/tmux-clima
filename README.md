@@ -5,7 +5,8 @@
 **Clima (Esperanto for weather) is a simple plugin that displays the local
 weather conditions and temperature in your Tmux status line.**
 
-The location is obtained automatically using your IP address.
+By default, the location is obtained automatically using your IP address. You can it set to a specific location using an
+option `@clima.location`
 
 Results are cached for 15 minutes by default.
 
@@ -83,6 +84,13 @@ option:
 
 ```bash
 set -g @clima_show_location 0
+```
+
+Set up your location using the following option, by default you will get the weather for your current location based on
+your IP address
+
+```bash
+set -g @clima_location "Melbourne"
 ```
 
 By default it always show the location in the statusbar.
