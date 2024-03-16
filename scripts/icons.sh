@@ -49,7 +49,7 @@ icon() {
             ;;
             # Atmosphere group
         701 | 711 | 721 | 731 | 751 | 761 | 762 | 771)
-            [[ $NERD_FONT == 1 ]] && echo ' ' || echo '  '
+            [[ $NERD_FONT == 1 ]] && echo ' ' || echo ' '
             ;;
         741)
             [[ $NERD_FONT == 1 ]] && echo ' ' || echo '🌫 '
