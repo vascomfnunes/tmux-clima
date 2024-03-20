@@ -69,7 +69,7 @@ clima() {
                 CLIMA="$CLIMA$ICON"
             fi
 
-            CLIMA="$CLIMA $TEMP"
+            CLIMA="$CLIMA$TEMP"
             CLIMA_DETAILS="${CITY}, ${COUNTRY}: ${ICON} ${TEMP}, ${DESCRIPTION}, ${FEELS_LIKE}, ${WIND_SPEED}"
 
             set_tmux_option "@clima_last_update_time" "$NOW"
