@@ -16,27 +16,19 @@ get_location_coordinates() {
     local loc_response=""
     local lat=""
     local lon=""
-    local city=""
-    local country=""
     if [ -z "$1" ]; then
         loc_response=$(curl --silent https://ifconfig.co/json)
         lat=$(echo "$loc_response" | jq -r .latitude)
         lon=$(echo "$loc_response" | jq -r .longitude)
-        city="$(echo "$loc_response" | jq -r .city)"
-        country="$(echo "$loc_response" | jq -r .country_iso)"
     else
         loc_response=$(curl --silent "http://api.openweathermap.org/geo/1.0/direct?q=$CLIMA_LOCATION&limit=1&appid=$OPEN_WEATHER_API_KEY")
         lat=$(echo "$loc_response" | jq -r .[0].lat)
         lon=$(echo "$loc_response" | jq -r .[0].lon)
-        city="$(echo "$loc_response" | jq -r .[0].name)"
-        country="$(echo "$loc_response" | jq -r .[0].country)"
     fi
 
     echo -n "$(jq -n --arg "lat" "$lat" \
         --arg "lon" "$lon" \
-        --arg "city" "$city" \
-        --arg "country" "$country" \
-        '{lat: $lat, lon: $lon, city: $city, country: $country}')"
+        '{lat: $lat, lon: $lon}')"
 }
 
 clima() {
@@ -54,15 +46,15 @@ clima() {
             CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
             TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)$SYMBOL"
             ICON="$(icon "$CATEGORY")"
-            CITY="$(echo "$LOCATION" | jq -r .city)"
-            COUNTRY="$(echo "$LOCATION" | jq -r .country)"
+            CITY="$(echo "$WEATHER" | jq -r .name)"
+            COUNTRY="$(echo "$WEATHER" | jq -r .sys.country)"
             DESCRIPTION="$(echo "$WEATHER" | jq -r .weather[0].main)"
             FEELS_LIKE="Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)$SYMBOL"
             WIND_SPEED="Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s"
             CLIMA=""
 
             if [ "$SHOW_LOCATION" == 1 ]; then
-                CLIMA="$CLIMA$CITY, "
+                CLIMA="$CLIMA$CITY,$COUNTRY "
             fi
 
             if [ "$SHOW_ICON" == 1 ]; then
