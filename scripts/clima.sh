@@ -22,8 +22,8 @@ get_location_coordinates() {
         lon=$(echo "$loc_response" | jq -r .longitude)
     else
         loc_response=$(curl --silent "http://api.openweathermap.org/geo/1.0/direct?q=$CLIMA_LOCATION&limit=1&appid=$OPEN_WEATHER_API_KEY")
-        lat=$(echo "$loc_response" | jq -r .[0].lat)
-        lon=$(echo "$loc_response" | jq -r .[0].lon)
+        lat=$(echo "$loc_response" | jq -r '.[0].lat')
+        lon=$(echo "$loc_response" | jq -r '.[0].lon')
     fi
 
     echo -n "$(jq -n --arg "lat" "$lat" \
@@ -43,12 +43,12 @@ clima() {
         LON=$(echo "$LOCATION" | jq -r .lon)
         WEATHER=$(curl --silent "http://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LON&APPID=$OPEN_WEATHER_API_KEY&units=$UNIT")
         if [ "$?" -eq 0 ]; then
-            CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
+            CATEGORY=$(echo "$WEATHER" | jq '.weather[0].id')
             TEMP="$(echo "$WEATHER" | jq .main.temp | cut -d . -f 1)$SYMBOL"
             ICON="$(icon "$CATEGORY")"
             CITY="$(echo "$WEATHER" | jq -r .name)"
             COUNTRY="$(echo "$WEATHER" | jq -r .sys.country)"
-            DESCRIPTION="$(echo "$WEATHER" | jq -r .weather[0].main)"
+            DESCRIPTION="$(echo "$WEATHER" | jq -r '.weather[0].main')"
             FEELS_LIKE="Feels like: $(echo "$WEATHER" | jq .main.feels_like | cut -d . -f 1)$SYMBOL"
             WIND_SPEED="Wind speed: $(echo "$WEATHER" | jq .wind.speed) m/s"
             CLIMA=""
