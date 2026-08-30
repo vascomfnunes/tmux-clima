@@ -17,9 +17,9 @@ get_location_coordinates() {
     local lat=""
     local lon=""
     if [ -z "$1" ]; then
-        loc_response=$(curl --silent https://ifconfig.co/json)
-        lat=$(echo "$loc_response" | jq -r .latitude)
-        lon=$(echo "$loc_response" | jq -r .longitude)
+        loc_response=$(curl --silent https://ipinfo.io)
+        lat=$(echo "$loc_response" | jq -r '.loc' | cut -d',' -f1)
+        lon=$(echo "$loc_response" | jq -r '.loc' | cut -d',' -f2)
     else
         loc_response=$(curl --silent "http://api.openweathermap.org/geo/1.0/direct?q=$CLIMA_LOCATION&limit=1&appid=$OPEN_WEATHER_API_KEY")
         lat=$(echo "$loc_response" | jq -r '.[0].lat')
